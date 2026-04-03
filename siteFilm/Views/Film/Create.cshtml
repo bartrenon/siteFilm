@@ -1,0 +1,31 @@
+﻿@model siteFilm.Models.Film
+
+<h2>Ajouter un film</h2>
+
+@if (TempData["Erreur"] != null)
+{
+    <div class="alert alert-danger">@TempData["Erreur"]</div>
+}
+
+<form asp-action="Create" asp-controller="Film" method="post">
+    <div class="mb-3">
+        <label asp-for="Titre" class="form-label"></label>
+        <input asp-for="Titre" class="form-control" />
+        <span asp-validation-for="Titre" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Genre" class="form-label"></label>
+        <input asp-for="Genre" class="form-control" />
+        <span asp-validation-for="Genre" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Annee" class="form-label"></label>
+        <input asp-for="Annee" class="form-control" />
+        <span asp-validation-for="Annee" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Ajouter</button>
+</form>
+
