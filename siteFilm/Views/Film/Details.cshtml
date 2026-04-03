@@ -1,0 +1,22 @@
+﻿@model Film
+
+@{
+    ViewData["Title"] = $"Details: {Model.Titre}";
+}
+
+@if (TempData["Info"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Info"]
+    </div>
+}
+
+
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Titre</h5>
+        <p class="card-text">@Model.Annee</p>
+        <p class="card-text">@Model.Genre</p>
+        <a asp-action="Index" asp-route-genre="@Model.Genre" class="btn btn-primary">Retour à la list</a> 
+    </div>
+</div>

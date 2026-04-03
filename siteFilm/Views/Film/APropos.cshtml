@@ -1,0 +1,13 @@
+﻿<h1>À propos des films</h1>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-info">@ViewBag.Message</div>
+}
+
+<ul>
+    <li>Total de films : @ViewData["TotalFilms"]</li>
+    <li>Genres différents : @ViewBag.NbGenres</li>
+    <li>Film le plus ancien : @ViewData["PlusAncien"]</li>
+    <li>Film le plus récent : @ViewData["PlusRecent"]</li>
+</ul>
