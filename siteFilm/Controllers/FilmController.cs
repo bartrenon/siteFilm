@@ -5,7 +5,7 @@ namespace siteFilm.Controllers;
 
 public class FilmController : Controller
 {
-    public readonly List<Film> Films = new List<Film>
+    public static List<Film> Films = new List<Film>
     {
         new Film { Id = 1, Titre = "Inception", Genre = "Science-Fiction", Annee = 2010 },
         new Film { Id = 2, Titre = "The Dark Knight", Genre = "Action", Annee = 2008 },
@@ -44,8 +44,6 @@ public class FilmController : Controller
 
         TempData["Info"] = $"Vous consultez les détails du film : {film.Titre}";
 
-        GetGenres();
-
         return View(film);
     }
 
@@ -61,10 +59,31 @@ public class FilmController : Controller
         var message = TempData["Message"];
         ViewBag.Message = message;
 
-        GetGenres();
-
         return View();
     }
+
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Create(Film film)
+    {
+        if (!ModelState.IsValid) 
+        {
+            TempData["Erreur"] = "Le formulaire contient des erreurs.";
+            return View(film); 
+        }
+
+        Films.Add(film);
+
+        TempData["success"] = $"Le film « {film.Titre} » a été ajouté avec succès.";
+
+        return RedirectToAction("Index");
+    }
+
 
     public IActionResult Delete(int id)
     {
