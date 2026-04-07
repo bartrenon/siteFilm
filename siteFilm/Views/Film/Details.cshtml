@@ -1,22 +1,55 @@
 ﻿@model Film
 
 @{
-    ViewData["Title"] = $"Details: {Model.Titre}";
+    ViewData["Title"] = $"Détails : {Model.Titre}";
 }
 
-@if (TempData["Info"] != null)
-{
-    <div class="alert alert-info">
-        @TempData["Info"]
-    </div>
-}
+<div class="container mt-4">
 
+    @if (TempData["Info"] != null)
+    {
+        <div class="alert alert-info shadow-sm">
+            @TempData["Info"]
+        </div>
+    }
 
-<div class="card" style="width: 18rem;">
-    <div class="card-body">
-        <h5 class="card-title">@Model.Titre</h5>
-        <p class="card-text">@Model.Annee</p>
-        <p class="card-text">@Model.Genre</p>
-        <a asp-action="Index" asp-route-genre="@Model.Genre" class="btn btn-primary">Retour à la list</a> 
+    <h2 class="text-center text-primary mb-4">🎬 Détails du film</h2>
+
+    <div class="card shadow-sm mx-auto" style="max-width: 28rem;">
+        <div class="card-body">
+
+            <h4 class="card-title text-center fw-bold">@Model.Titre</h4>
+
+            <ul class="list-group list-group-flush mt-3">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="fw-bold">Année :</span>
+                    <span>@Model.Annee</span>
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="fw-bold">Genre :</span>
+                    <span>@Model.Genre</span>
+                </li>
+            </ul>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn btn-secondary">
+                    Retour à la liste
+                </a>
+
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning disabled">
+                    Modifier
+                </a>
+
+                <form asp-action="Delete" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger">
+                        Supprimer
+                    </button>
+                </form>
+            </div>
+
+        </div>
     </div>
+
 </div>
