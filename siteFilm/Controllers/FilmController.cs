@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using siteFilm.Models;
 
 namespace siteFilm.Controllers;
 
 public class FilmController : Controller
 {
-    public static List<Film> Films = new List<Film>
+    public static List<Film> Films = new()
     {
         new Film { Id = 1, Titre = "Inception", Genre = "Science-Fiction", Annee = 2010 },
         new Film { Id = 2, Titre = "The Dark Knight", Genre = "Action", Annee = 2008 },
@@ -15,12 +16,11 @@ public class FilmController : Controller
         new Film { Id = 6, Titre = "La La Land", Genre = "Comédie Musicale", Annee = 2016 }
     };
 
-    public IActionResult Index(string? genre = null) 
+    public IActionResult Index(string? genre = null)
     {
-        List<Film> films = string.IsNullOrEmpty(genre) ? Films :
-           Films.Where(f => f.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase)).ToList();
-
-        GetGenres();
+        var films = string.IsNullOrEmpty(genre)
+            ? Films
+            : Films.Where(f => f.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase)).ToList();
 
         return View(films);
     }
@@ -31,10 +31,9 @@ public class FilmController : Controller
         return View("Index", films);
     }
 
-
     public IActionResult Details(int id)
     {
-        Film? film = Films.FirstOrDefault(f => f.Id == id);
+        var film = Films.FirstOrDefault(f => f.Id == id);
 
         if (film is null)
         {
@@ -43,66 +42,58 @@ public class FilmController : Controller
         }
 
         TempData["Info"] = $"Vous consultez les détails du film : {film.Titre}";
-
         return View(film);
     }
 
-
-    public IActionResult APropos() 
+    public IActionResult APropos()
     {
-      
         ViewData["TotalFilms"] = Films.Count;
         ViewBag.NbGenres = Films.Select(f => f.Genre).Distinct().Count();
         ViewData["PlusAncien"] = Films.Min(f => f.Annee);
         ViewData["PlusRecent"] = Films.Max(f => f.Annee);
 
-        var message = TempData["Message"];
-        ViewBag.Message = message;
-
         return View();
     }
 
     [HttpGet]
-    public IActionResult Create()
-    {
-        return View();
-    }
+    public IActionResult Create() => View();
 
     [HttpPost]
     public IActionResult Create(Film film)
     {
-        if (!ModelState.IsValid) 
+        if (!ModelState.IsValid)
         {
             TempData["Erreur"] = "Le formulaire contient des erreurs.";
-            return View(film); 
+            return View(film);
         }
 
+        film.Id = Films.Max(f => f.Id) + 1;
         Films.Add(film);
 
         TempData["success"] = $"Le film « {film.Titre} » a été ajouté avec succès.";
-
         return RedirectToAction("Index");
     }
-
 
     public IActionResult Delete(int id)
     {
         var film = Films.FirstOrDefault(f => f.Id == id);
-        if (film == null)
-            return NotFound();
+
+        if (film is null)
+        {
+            TempData["Erreur"] = "Impossible de supprimer : film introuvable.";
+            return RedirectToAction("Index");
+        }
 
         Films.Remove(film);
 
         TempData["success"] = $"Le film « {film.Titre} » a été supprimé avec succès.";
-
         return RedirectToAction("Index");
     }
 
-
-    private void GetGenres()
+    public override void OnActionExecuting(ActionExecutingContext context)
     {
-        ViewBag.Genres =  Films.Select(f => f.Genre).Distinct().ToList();
+        ViewBag.Genres = Films.Select(f => f.Genre).Distinct().OrderBy(g => g);
+        base.OnActionExecuting(context);
     }
-
-
 }
+
